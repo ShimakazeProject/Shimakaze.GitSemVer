@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <NeutralLanguage>zh-Hans</NeutralLanguage>
     <PackAsTool>True</PackAsTool>
+    <ToolCommandName>gitver</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>
