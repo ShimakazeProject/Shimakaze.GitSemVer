@@ -73,7 +73,7 @@ jobs:
           Write-Output "### Build Success :rocket: ">> $env:GITHUB_STEP_SUMMARY
           Write-Output "|FileName|$Private:Algorithm|" >> $env:GITHUB_STEP_SUMMARY
           Write-Output "|:-|:-:|" >> $env:GITHUB_STEP_SUMMARY
-          Get-ChildItem artifacts\package\release | ForEach-Object {
+          Get-ChildItem artifacts/package/release | ForEach-Object {
             $Private:Name = $PSItem.Name
             $Private:FileHashResult = Get-FileHash $PSItem -Algorithm $Private:Algorithm
             $Private:FileHash = $Private:FileHashResult.Hash
@@ -85,7 +85,7 @@ jobs:
         with:
           name: nuget-packages
           path: |
-            artifacts\package\release\*
+            artifacts/package/release/*
           retention-days: 3
   release:
     needs: build
