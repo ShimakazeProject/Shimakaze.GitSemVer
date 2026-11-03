@@ -43,12 +43,21 @@
     <value>未找到有效版本标签时使用的版本。</value>
   </data>
   <data name="AssemblySemVerDescription" xml:space="preserve">
-    <value>程序集版本模板，支持 {Major} 和 {Minor} 等占位符。</value>
+    <value>程序集版本模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。</value>
   </data>
   <data name="AssemblyFileSemVerDescription" xml:space="preserve">
-    <value>程序集文件版本模板，支持 {Major}、{Minor} 和 {Patch} 等占位符。</value>
+    <value>程序集文件版本模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。</value>
+  </data>
+  <data name="PreReleaseTagTemplateDescription" xml:space="preserve">
+    <value>预发布标签模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。</value>
+  </data>
+  <data name="SemVerTemplateDescription" xml:space="preserve">
+    <value>SemVer 模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。</value>
+  </data>
+  <data name="FullSemVerTemplateDescription" xml:space="preserve">
+    <value>FullSemVer 模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。</value>
   </data>
   <data name="InformationalVersionDescription" xml:space="preserve">
-    <value>信息版本模板。</value>
+    <value>信息版本模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。</value>
   </data>
 </root>

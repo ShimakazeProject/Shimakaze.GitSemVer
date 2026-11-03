@@ -11,7 +11,7 @@ using Shimakaze.GitSemVer.Resources;
 namespace Shimakaze.GitSemVer;
 
 [CliCommand(Description = nameof(Resource.CommandDescription), ShortFormAutoGenerate = CliNameAutoGenerate.None)]
-public sealed partial class RootCommand
+public sealed partial class RootCommand : ITemplateProvider
 {
     [CliOption(Description = nameof(Resource.SourceDescription), Alias = "t")]
     public GitProviderType Type { get; set; } = GitProviderType.Local;
@@ -33,12 +33,18 @@ public sealed partial class RootCommand
     [CliOption(Description = nameof(Resource.TagPrefixDescription), Alias = "p")]
     public Regex TagPrefix { get; set; } = new("^[vV]?", RegexOptions.Compiled);
     [CliOption(Description = nameof(Resource.DefaultVersionDescription))]
-    public SemanticVersion DefaultVersion { get; set; } = SemanticVersion.Parse("0.0.0");
+    public SemanticVersion FallbackVersion { get; set; } = new(0, 0, 0);
 
+    [CliOption(Description = nameof(Resource.PreReleaseTagTemplateDescription))]
+    public string PreReleaseTag { get; set; } = "{PreReleaseNumber ? {Label}.{PreReleaseNumber} : {Label}}";
+    [CliOption(Description = nameof(Resource.SemVerTemplateDescription))]
+    public string Semver { get; set; } = "{PreReleaseTag ? {MajorMinorPatch}-{PreReleaseTag} : {MajorMinorPatch}}";
+    [CliOption(Description = nameof(Resource.FullSemVerTemplateDescription))]
+    public string FullSemver { get; set; } = "{SemVer}+{ShortSha}";
     [CliOption(Description = nameof(Resource.AssemblySemVerDescription))]
-    public string AssemblySemver { get; set; } = "{Major}.{Minor}.0.0";
+    public string AssemblySemver { get; set; } = "{Major}.{Minor}.{Patch}.{Height}";
     [CliOption(Description = nameof(Resource.AssemblyFileSemVerDescription))]
-    public string AssemblyFileSemver { get; set; } = "{Major}.{Minor}.{Patch}.0";
+    public string AssemblyFileSemver { get; set; } = "{Major}.{Minor}.{Patch}.{Height}";
     [CliOption(Description = nameof(Resource.InformationalVersionDescription))]
     public string InformationalVersion { get; set; } = "{FullSemVer}";
 
@@ -94,7 +100,7 @@ public sealed partial class RootCommand
         }
 
         return CreateVersionInfo(
-            DefaultVersion,
+            FallbackVersion,
             latestCommit,
             gitInfo.GetCommitDate(latestCommit),
             gitInfo.GetBranchName(latestCommit),
@@ -132,7 +138,7 @@ public sealed partial class RootCommand
     {
         var info = GetInfo();
 
-        info.SetTemplates(AssemblySemver, AssemblyFileSemver, InformationalVersion);
+        info.SetTemplates(this);
 
         Console.WriteLine(JsonSerializer.Serialize(info, GitSemVerJsonSerializerContext.Default.VersionInfo));
     }

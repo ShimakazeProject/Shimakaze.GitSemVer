@@ -43,12 +43,21 @@
     <value>Version to use when no valid version tag is found.</value>
   </data>
   <data name="AssemblySemVerDescription" xml:space="preserve">
-    <value>Assembly version template. Supported placeholders include {Major} and {Minor}.</value>
+    <value>Assembly version template. Supports {variable} references and {condition ? non-empty template : empty template} expressions, including references to other templates.</value>
   </data>
   <data name="AssemblyFileSemVerDescription" xml:space="preserve">
-    <value>Assembly file version template. Supported placeholders include {Major}, {Minor}, and {Patch}.</value>
+    <value>Assembly file version template. Supports {variable} references and {condition ? non-empty template : empty template} expressions, including references to other templates.</value>
+  </data>
+  <data name="PreReleaseTagTemplateDescription" xml:space="preserve">
+    <value>Pre-release tag template. Supports {variable} references and {condition ? non-empty template : empty template} expressions, including references to other templates.</value>
+  </data>
+  <data name="SemVerTemplateDescription" xml:space="preserve">
+    <value>SemVer template. Supports {variable} references and {condition ? non-empty template : empty template} expressions, including references to other templates.</value>
+  </data>
+  <data name="FullSemVerTemplateDescription" xml:space="preserve">
+    <value>FullSemVer template. Supports {variable} references and {condition ? non-empty template : empty template} expressions, including references to other templates.</value>
   </data>
   <data name="InformationalVersionDescription" xml:space="preserve">
-    <value>Informational version template.</value>
+    <value>Informational version template. Supports {variable} references and {condition ? non-empty template : empty template} expressions, including references to other templates.</value>
   </data>
 </root>

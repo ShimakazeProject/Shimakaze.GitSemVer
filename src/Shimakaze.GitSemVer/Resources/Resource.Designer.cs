@@ -61,7 +61,7 @@ namespace Shimakaze.GitSemVer.Resources {
         }
         
         /// <summary>
-        ///   查找类似 程序集文件版本模板，支持 {Major}、{Minor} 和 {Patch} 等占位符。 的本地化字符串。
+        ///   查找类似 程序集文件版本模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。 的本地化字符串。
         /// </summary>
         public static string AssemblyFileSemVerDescription {
             get {
@@ -70,7 +70,7 @@ namespace Shimakaze.GitSemVer.Resources {
         }
         
         /// <summary>
-        ///   查找类似 程序集版本模板，支持 {Major} 和 {Minor} 等占位符。 的本地化字符串。
+        ///   查找类似 程序集版本模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。 的本地化字符串。
         /// </summary>
         public static string AssemblySemVerDescription {
             get {
@@ -142,7 +142,7 @@ namespace Shimakaze.GitSemVer.Resources {
         }
         
         /// <summary>
-        ///   查找类似 信息版本模板。 的本地化字符串。
+        ///   查找类似 信息版本模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。 的本地化字符串。
         /// </summary>
         public static string InformationalVersionDescription {
             get {
@@ -158,6 +158,15 @@ namespace Shimakaze.GitSemVer.Resources {
                 return ResourceManager.GetString("PathDescription", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   查找类似 预发布标签模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。 的本地化字符串。
+        /// </summary>
+        public static string PreReleaseTagTemplateDescription {
+            get {
+                return ResourceManager.GetString("PreReleaseTagTemplateDescription", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   查找类似 Git 信息来源：Local（本地）或 GitHub。 的本地化字符串。
@@ -167,6 +176,15 @@ namespace Shimakaze.GitSemVer.Resources {
                 return ResourceManager.GetString("SourceDescription", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   查找类似 SemVer 模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。 的本地化字符串。
+        /// </summary>
+        public static string SemVerTemplateDescription {
+            get {
+                return ResourceManager.GetString("SemVerTemplateDescription", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   查找类似 用于从 Git 标签中移除版本前缀的正则表达式。 的本地化字符串。
@@ -174,6 +192,15 @@ namespace Shimakaze.GitSemVer.Resources {
         public static string TagPrefixDescription {
             get {
                 return ResourceManager.GetString("TagPrefixDescription", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   查找类似 FullSemVer 模板；支持 {变量} 引用和 {条件 ? 非空时模板 : 空时模板} 条件表达式，可引用其他模板。 的本地化字符串。
+        /// </summary>
+        public static string FullSemVerTemplateDescription {
+            get {
+                return ResourceManager.GetString("FullSemVerTemplateDescription", resourceCulture);
             }
         }
     }

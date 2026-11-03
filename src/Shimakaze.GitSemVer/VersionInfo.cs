@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Text;
 
 namespace Shimakaze.GitSemVer;
 
@@ -18,46 +17,50 @@ public sealed class VersionInfo
 
     public string ShortSha => Sha[..Math.Min(7, Sha.Length)];
 
-    public string? PreReleaseTag => Label is null
-        ? null
-        : PreReleaseNumber is { } number
-            ? $"{Label}.{number}"
-            : Label;
-
     public string MajorMinorPatch => $"{Major}.{Minor}.{Patch}";
 
-    public string SemVer => PreReleaseTag is { } tag
-        ? $"{MajorMinorPatch}-{tag}"
-        : MajorMinorPatch;
-
-    public string FullSemVer => $"{SemVer}+{ShortSha}";
-
+    public string? PreReleaseTag { get; private set; }
+    public string? SemVer { get; private set; }
+    public string? FullSemVer { get; private set; }
     public string? AssemblySemVer { get; private set; }
     public string? AssemblyFileSemVer { get; private set; }
     public string? InformationalVersion { get; private set; }
 
-    public void SetTemplates(string assemblySemVer, string assemblyFileSemVer, string informationalVersion)
+    public void SetTemplates(ITemplateProvider templateProvider)
     {
-        AssemblySemVer = ApplyTemplate(assemblySemVer);
-        AssemblyFileSemVer = ApplyTemplate(assemblyFileSemVer);
-        InformationalVersion = ApplyTemplate(informationalVersion);
+        Dictionary<string, string?> values = new(StringComparer.OrdinalIgnoreCase)
+        {
+            [nameof(Major)] = Major.ToString(CultureInfo.InvariantCulture),
+            [nameof(Minor)] = Minor.ToString(CultureInfo.InvariantCulture),
+            [nameof(Patch)] = Patch.ToString(CultureInfo.InvariantCulture),
+            [nameof(Label)] = Label,
+            [nameof(PreReleaseNumber)] = PreReleaseNumber?.ToString(CultureInfo.InvariantCulture),
+            [nameof(Sha)] = Sha,
+            [nameof(Branch)] = Branch,
+            [nameof(VersionSourceSha)] = VersionSourceSha,
+            [nameof(Height)] = Height.ToString(CultureInfo.InvariantCulture),
+            [nameof(CommitDate)] = CommitDate.ToString("o", CultureInfo.InvariantCulture),
+            [nameof(ShortSha)] = ShortSha,
+            [nameof(MajorMinorPatch)] = MajorMinorPatch,
+        };
+        Dictionary<string, string> templates = new(StringComparer.OrdinalIgnoreCase)
+        {
+            [nameof(PreReleaseTag)] = templateProvider.PreReleaseTag,
+            [nameof(SemVer)] = templateProvider.Semver,
+            [nameof(FullSemVer)] = templateProvider.FullSemver,
+            [nameof(AssemblySemVer)] = templateProvider.AssemblySemver,
+            [nameof(AssemblyFileSemVer)] = templateProvider.AssemblyFileSemver,
+            [nameof(InformationalVersion)] = templateProvider.InformationalVersion,
+        };
+        TemplateEngine engine = new (values, templates);
+
+        PreReleaseTag = NullIfEmpty(engine.Resolve(nameof(PreReleaseTag)));
+        SemVer = engine.Resolve(nameof(SemVer));
+        FullSemVer = engine.Resolve(nameof(FullSemVer));
+        AssemblySemVer = engine.Resolve(nameof(AssemblySemVer));
+        AssemblyFileSemVer = engine.Resolve(nameof(AssemblyFileSemVer));
+        InformationalVersion = engine.Resolve(nameof(InformationalVersion));
     }
 
-    private string ApplyTemplate(string template) => new StringBuilder(template)
-        .Replace("{Major}", Major.ToString(CultureInfo.InvariantCulture))
-        .Replace("{Minor}", Minor.ToString(CultureInfo.InvariantCulture))
-        .Replace("{Patch}", Patch.ToString(CultureInfo.InvariantCulture))
-        .Replace("{Label}", Label ?? "")
-        .Replace("{PreReleaseNumber}", PreReleaseNumber?.ToString(CultureInfo.InvariantCulture) ?? "")
-        .Replace("{Sha}", Sha)
-        .Replace("{Branch}", Branch ?? "")
-        .Replace("{VersionSourceSha}", VersionSourceSha)
-        .Replace("{Height}", Height.ToString(CultureInfo.InvariantCulture))
-        .Replace("{CommitDate}", CommitDate.ToString("o", CultureInfo.InvariantCulture))
-        .Replace("{ShortSha}", ShortSha)
-        .Replace("{PreReleaseTag}", PreReleaseTag ?? "")
-        .Replace("{MajorMinorPatch}", MajorMinorPatch)
-        .Replace("{SemVer}", SemVer)
-        .Replace("{FullSemVer}", FullSemVer)
-        .ToString();
+    private static string? NullIfEmpty(string? value) => string.IsNullOrEmpty(value) ? null : value;
 }
