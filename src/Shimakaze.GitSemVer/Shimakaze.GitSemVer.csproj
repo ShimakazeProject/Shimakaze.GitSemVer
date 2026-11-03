@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotMake.CommandLine" />
+    <PackageReference Include="LibGit2Sharp" />
+    <PackageReference Include="NuGet.Versioning" />
+  </ItemGroup>
+
+</Project>
