@@ -6,55 +6,53 @@ using DotMake.CommandLine;
 
 using NuGet.Versioning;
 
+using Shimakaze.GitSemVer.Resources;
+
 namespace Shimakaze.GitSemVer;
 
-[CliCommand]
+[CliCommand(Description = nameof(Resource.CommandDescription), ShortFormAutoGenerate = CliNameAutoGenerate.None)]
 public sealed partial class RootCommand
 {
-    [CliOption(Required = false)]
-    public string Path { get; set; } = Environment.CurrentDirectory;
+    [CliOption(Description = nameof(Resource.SourceDescription), Alias = "t")]
+    public GitProviderType Type { get; set; } = GitProviderType.Local;
 
-    [CliOption(Required = false)]
+    [CliOption(Description = nameof(Resource.PathDescription), Alias = "r")]
+    public string Repo { get; set; } = Environment.CurrentDirectory;
+
+    [CliOption(Description = nameof(Resource.GithubOwnerDescription), Required = false)]
     public string? GithubOwner { get; set; } = Environment.GetEnvironmentVariable("GITHUB_OWNER");
-    [CliOption(Required = false)]
+    [CliOption(Description = nameof(Resource.GithubRepoDescription), Required = false)]
     public string? GithubRepo { get; set; } = Environment.GetEnvironmentVariable("GITHUB_REPO");
-    [CliOption(Required = false)]
+    [CliOption(Description = nameof(Resource.GithubTokenDescription), Required = false)]
     public string? GithubToken { get; set; } = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-    [CliOption(Required = false)]
+    [CliOption(Description = nameof(Resource.GithubHostDescription), Required = false)]
     public Uri GithubHost { get; set; } = new("https://api.github.com");
 
-    [CliOption]
+    [CliOption(Description = nameof(Resource.BranchDescription), Alias = "b")]
     public string Branch { get; set; } = "HEAD";
-
-    [CliOption]
-    public GitSource Source { get; set; } = GitSource.Local;
-
-    [CliOption]
+    [CliOption(Description = nameof(Resource.TagPrefixDescription), Alias = "p")]
     public Regex TagPrefix { get; set; } = new("^[vV]?", RegexOptions.Compiled);
-
-    [CliOption]
+    [CliOption(Description = nameof(Resource.DefaultVersionDescription))]
     public SemanticVersion DefaultVersion { get; set; } = SemanticVersion.Parse("0.0.0");
 
-    [CliOption]
-    public string AssemblySemVer { get; set; } = "{Major}.{Minor}.0.0";
-
-    [CliOption]
-    public string AssemblyFileSemVer { get; set; } = "{Major}.{Minor}.{Patch}.0";
-
-    [CliOption]
+    [CliOption(Description = nameof(Resource.AssemblySemVerDescription))]
+    public string AssemblySemver { get; set; } = "{Major}.{Minor}.0.0";
+    [CliOption(Description = nameof(Resource.AssemblyFileSemVerDescription))]
+    public string AssemblyFileSemver { get; set; } = "{Major}.{Minor}.{Patch}.0";
+    [CliOption(Description = nameof(Resource.InformationalVersionDescription))]
     public string InformationalVersion { get; set; } = "{FullSemVer}";
 
     private VersionInfo GetInfo()
     {
-        IGitInfoProvider gitInfo = Source switch
+        IGitInfoProvider gitInfo = Type switch
         {
-            GitSource.Local => new LocalGitInfoProvider(Path),
-            GitSource.GitHub => new GitHubGitInfoProvider(
+            GitProviderType.Local => new LocalGitInfoProvider(Repo),
+            GitProviderType.GitHub => new GitHubGitInfoProvider(
                 GithubOwner ?? throw new ArgumentException("GITHUB_OWNER is not set."),
                 GithubRepo ?? throw new ArgumentException("GITHUB_REPO is not set."),
                 GithubToken ?? throw new ArgumentException("GITHUB_TOKEN is not set."),
                 GithubHost),
-            _ => throw new NotSupportedException($"Git source '{Source}' is not supported.")
+            _ => throw new NotSupportedException($"Git source '{Type}' is not supported.")
         };
         using var dispose = gitInfo as IDisposable;
 
@@ -134,7 +132,7 @@ public sealed partial class RootCommand
     {
         var info = GetInfo();
 
-        info.SetTemplates(AssemblySemVer, AssemblyFileSemVer, InformationalVersion);
+        info.SetTemplates(AssemblySemver, AssemblyFileSemver, InformationalVersion);
 
         Console.WriteLine(JsonSerializer.Serialize(info, GitSemVerJsonSerializerContext.Default.VersionInfo));
     }

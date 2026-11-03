@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="CommandDescription" xml:space="preserve">
+    <value>Generate semantic version information from Git history.</value>
+  </data>
+  <data name="PathDescription" xml:space="preserve">
+    <value>Path to the local Git repository.</value>
+  </data>
+  <data name="GithubOwnerDescription" xml:space="preserve">
+    <value>GitHub repository owner. Defaults to the GITHUB_OWNER environment variable.</value>
+  </data>
+  <data name="GithubRepoDescription" xml:space="preserve">
+    <value>GitHub repository name. Defaults to the GITHUB_REPO environment variable.</value>
+  </data>
+  <data name="GithubTokenDescription" xml:space="preserve">
+    <value>GitHub personal access token. Defaults to the GITHUB_TOKEN environment variable.</value>
+  </data>
+  <data name="GithubHostDescription" xml:space="preserve">
+    <value>GitHub API base URL.</value>
+  </data>
+  <data name="BranchDescription" xml:space="preserve">
+    <value>Git branch or reference to calculate the version from.</value>
+  </data>
+  <data name="SourceDescription" xml:space="preserve">
+    <value>Git information source: Local or GitHub.</value>
+  </data>
+  <data name="TagPrefixDescription" xml:space="preserve">
+    <value>Regular expression matching the version prefix to remove from Git tags.</value>
+  </data>
+  <data name="DefaultVersionDescription" xml:space="preserve">
+    <value>Version to use when no valid version tag is found.</value>
+  </data>
+  <data name="AssemblySemVerDescription" xml:space="preserve">
+    <value>Assembly version template. Supported placeholders include {Major} and {Minor}.</value>
+  </data>
+  <data name="AssemblyFileSemVerDescription" xml:space="preserve">
+    <value>Assembly file version template. Supported placeholders include {Major}, {Minor}, and {Patch}.</value>
+  </data>
+  <data name="InformationalVersionDescription" xml:space="preserve">
+    <value>Informational version template.</value>
+  </data>
+</root>

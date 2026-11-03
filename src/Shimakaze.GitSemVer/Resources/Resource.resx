@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="CommandDescription" xml:space="preserve">
+    <value>根据 Git 历史生成语义化版本信息。</value>
+  </data>
+  <data name="PathDescription" xml:space="preserve">
+    <value>本地 Git 仓库路径。</value>
+  </data>
+  <data name="GithubOwnerDescription" xml:space="preserve">
+    <value>GitHub 仓库所有者，默认读取 GITHUB_OWNER 环境变量。</value>
+  </data>
+  <data name="GithubRepoDescription" xml:space="preserve">
+    <value>GitHub 仓库名称，默认读取 GITHUB_REPO 环境变量。</value>
+  </data>
+  <data name="GithubTokenDescription" xml:space="preserve">
+    <value>GitHub 个人访问令牌，默认读取 GITHUB_TOKEN 环境变量。</value>
+  </data>
+  <data name="GithubHostDescription" xml:space="preserve">
+    <value>GitHub API 基础 URL。</value>
+  </data>
+  <data name="BranchDescription" xml:space="preserve">
+    <value>用于计算版本的 Git 分支或引用。</value>
+  </data>
+  <data name="SourceDescription" xml:space="preserve">
+    <value>Git 信息来源：Local（本地）或 GitHub。</value>
+  </data>
+  <data name="TagPrefixDescription" xml:space="preserve">
+    <value>用于从 Git 标签中移除版本前缀的正则表达式。</value>
+  </data>
+  <data name="DefaultVersionDescription" xml:space="preserve">
+    <value>未找到有效版本标签时使用的版本。</value>
+  </data>
+  <data name="AssemblySemVerDescription" xml:space="preserve">
+    <value>程序集版本模板，支持 {Major} 和 {Minor} 等占位符。</value>
+  </data>
+  <data name="AssemblyFileSemVerDescription" xml:space="preserve">
+    <value>程序集文件版本模板，支持 {Major}、{Minor} 和 {Patch} 等占位符。</value>
+  </data>
+  <data name="InformationalVersionDescription" xml:space="preserve">
+    <value>信息版本模板。</value>
+  </data>
+</root>

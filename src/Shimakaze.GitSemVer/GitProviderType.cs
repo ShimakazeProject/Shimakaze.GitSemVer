@@ -1,6 +1,6 @@
 namespace Shimakaze.GitSemVer;
 
-public enum GitSource
+public enum GitProviderType
 {
     Local,
     GitHub,
