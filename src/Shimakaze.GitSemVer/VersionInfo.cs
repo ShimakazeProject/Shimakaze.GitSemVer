@@ -12,7 +12,7 @@ public sealed class VersionInfo
     public required int? PreReleaseNumber { get; init; }
     public required string Sha { get; init; }
     public required string? Branch { get; init; }
-    public required string VersionSourceSha { get; init; }
+    public required string? VersionSourceSha { get; init; }
     public required int Height { get; init; }
     public required DateTimeOffset CommitDate { get; init; }
 
