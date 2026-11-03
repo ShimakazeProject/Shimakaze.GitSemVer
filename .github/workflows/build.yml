@@ -1,0 +1,132 @@
+name: 构建
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+jobs:
+  build:
+    name: 构建
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 签出仓库
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: 配置 .Net 环境
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: ./global.json
+
+      - name: 还原 .Net 工具
+        run: dotnet tool restore
+
+      - name: 生成版本文件
+        run: |
+          $Version = dotnet tool run gitver | ConvertFrom-Json
+          @"
+          <Project>
+            <PropertyGroup>
+              <Version>$($Version.SemVer)</Version>
+              <VersionPrefix>$($Version.MajorMinorPatch)</VersionPrefix>
+              <VersionSuffix>$($Version.PreReleaseTag)</VersionSuffix>
+              <PackageVersion>$($Version.FullSemVer)</PackageVersion>
+              <InformationalVersion>$($Version.InformationalVersion)</InformationalVersion>
+              <AssemblyVersion>$($Version.AssemblySemVer)</AssemblyVersion>
+              <FileVersion>$($Version.AssemblyFileSemVer)</FileVersion>
+              <RepositoryBranch>$($Version.Branch)</RepositoryBranch>
+              <RepositoryCommit>$($Version.Sha)</RepositoryCommit>
+            </PropertyGroup>
+          </Project>
+          "@ | Set-Content Directory.Version.props -Encoding utf8
+
+      - name: 还原
+        run: dotnet restore --graph --artifacts-path artifacts
+
+      - name: 生成
+        run: dotnet build --graph --artifacts-path artifacts --configuration Release --no-restore
+
+      - name: 打包
+        run: dotnet pack --graph --artifacts-path artifacts --configuration Release --no-restore --no-build --include-symbols --include-source
+
+      - name: 生成校验和
+        shell: pwsh
+        run: |
+          $Private:Algorithm = 'SHA256'
+          Write-Output "### Build Success :rocket: ">> $env:GITHUB_STEP_SUMMARY
+          Write-Output "|FileName|$Private:Algorithm|" >> $env:GITHUB_STEP_SUMMARY
+          Write-Output "|:-|:-:|" >> $env:GITHUB_STEP_SUMMARY
+          Get-ChildItem artifacts\package\release | ForEach-Object {
+            $Private:Name = $PSItem.Name
+            $Private:FileHashResult = Get-FileHash $PSItem -Algorithm $Private:Algorithm
+            $Private:FileHash = $Private:FileHashResult.Hash
+            Write-Output "|$Private:Name|$Private:FileHash|" >> $env:GITHUB_STEP_SUMMARY
+          }
+
+      - name: 收集 Nuget 包
+        uses: actions/upload-artifact@v7
+        with:
+          name: nuget-packages
+          path: |
+            artifacts\package\release\*
+          retention-days: 3
+  release:
+    needs: build
+    name: 发布
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+      discussions: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: 签出仓库
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: "."
+
+      - name: 配置 .Net 环境
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: ./global.json
+          cache: false
+
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: nuget-packages
+          path: artifacts
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: artifacts/*
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref, '-') }}
+
+      # Get a short-lived NuGet API key
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: nuget
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: 推送 Nuget 包
+        run: dotnet nuget push artifacts/*.nupkg --api-key "${{ steps.nuget.outputs.NUGET_API_KEY }}" --source "https://www.nuget.org/api/v2/package" --skip-duplicate
